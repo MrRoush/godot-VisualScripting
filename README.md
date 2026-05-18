@@ -44,9 +44,9 @@ A beginner-friendly Godot 4 editor plugin that lets you author game logic by con
 |---|---|---|
 | ⬜ Light grey | Execution flow | `PORT_EXEC` |
 | 🟦 Blue | Boolean | `PORT_BOOL` |
-| 🟩 Green | Integer | `PORT_INT` |
+| 🟦 Cyan | Integer | `PORT_INT` |
 | 🟧 Orange | Float | `PORT_FLOAT` |
-| 🟥 Red | String | `PORT_STRING` |
+| 🩷 Pink | String | `PORT_STRING` |
 | 🟪 Purple | Any / Wildcard | `PORT_ANY` |
 
 ### Node categories
@@ -126,7 +126,10 @@ This produces `@export var speed: float = 300.0` at the top of the script.
 ### 5. Add the physics process event
 
 Click **✚ Add Node → Events → _physics_process(delta)**.  
-This is the entry point; the white **exec** port on the right starts the execution chain.
+This is the entry point for the generated function:
+- It has **no incoming exec port** (nothing connects *into* it).
+- Start your chain by connecting its right-side white **exec** port to the first action node.
+- The **delta** output is a float you can wire into math/action float inputs when needed.
 
 ### 6. Read horizontal input
 
@@ -146,6 +149,7 @@ Connect:
 - `Export Variable (speed)` **value** → `Multiply` **b**
 
 *(Add the `Export Variable` node first if you haven't already.)*
+The `Export Variable` **value** port is a purple wildcard, so it can connect to typed data ports (like `Multiply`'s orange float input).
 
 ### 8. Apply movement
 
@@ -154,6 +158,8 @@ Click **✚ Add Node → Actions → move_and_slide()**.
 Connect:
 - `_physics_process` **exec** → `move_and_slide` **exec** (white port)
 - `Multiply` **result** → `move_and_slide` **velocity.x** (orange port)
+
+For longer logic chains, continue from each action node's right-side **exec** output into the next node's left-side **exec** input.
 
 ### 9. Compile
 
@@ -184,4 +190,3 @@ Select the `CharacterBody2D` root node in your scene, click the **Script** prope
 - Re-compile after any change to regenerate the `.gd` file.
 - The generated file is plain GDScript — feel free to extend it with hand-written code after compilation.
 - Connect a **Branch** node after an input check to run different actions depending on a condition (e.g. playing different animations when moving vs. idle).
-

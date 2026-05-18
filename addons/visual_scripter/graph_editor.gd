@@ -96,6 +96,7 @@ func _build_ui() -> void:
 	_graph_edit.minimap_enabled       = true
 	_graph_edit.show_zoom_label       = true
 	add_child(_graph_edit)
+	_configure_valid_connection_types()
 
 	_graph_edit.connection_request.connect(_on_connection_request)
 	_graph_edit.disconnection_request.connect(_on_disconnection_request)
@@ -366,11 +367,7 @@ func _on_connection_request(
 	var out_type: int = _get_right_port_type(from_gnode, from_port)
 	var in_type:  int = _get_left_port_type(to_gnode,   to_port)
 
-	# Allow: same type, or either side is PORT_ANY (wildcard).
-	var compatible: bool = (out_type == in_type
-			or out_type == NodeDefs.PORT_ANY
-			or in_type  == NodeDefs.PORT_ANY)
-	if not compatible:
+	if not _are_port_types_compatible(out_type, in_type):
 		return
 
 	_graph_edit.connect_node(from_node, from_port, to_node, to_port)
@@ -420,6 +417,29 @@ func _get_left_port_type(gnode: GraphNode, port_idx: int) -> int:
 	if port_idx >= slots.size():
 		return -1
 	return slots[port_idx].get("left_type", -1)
+
+
+func _configure_valid_connection_types() -> void:
+	var data_types: Array[int] = [
+		NodeDefs.PORT_BOOL,
+		NodeDefs.PORT_INT,
+		NodeDefs.PORT_FLOAT,
+		NodeDefs.PORT_STRING,
+		NodeDefs.PORT_ANY,
+	]
+	for data_type: int in data_types:
+		_graph_edit.add_valid_connection_type(NodeDefs.PORT_ANY, data_type)
+		_graph_edit.add_valid_connection_type(data_type, NodeDefs.PORT_ANY)
+
+
+func _are_port_types_compatible(out_type: int, in_type: int) -> bool:
+	if out_type == -1 or in_type == -1:
+		return false
+	if out_type == NodeDefs.PORT_EXEC or in_type == NodeDefs.PORT_EXEC:
+		return out_type == in_type
+	return out_type == in_type \
+			or out_type == NodeDefs.PORT_ANY \
+			or in_type == NodeDefs.PORT_ANY
 
 
 # ── Compile ───────────────────────────────────────────────────────────────────
