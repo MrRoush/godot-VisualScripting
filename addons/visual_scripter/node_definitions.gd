@@ -24,9 +24,9 @@ const PORT_ANY: int = 5
 const PORT_COLORS: Dictionary = {
 	0: Color(0.90, 0.90, 0.90, 1.0),  # EXEC   – light grey
 	1: Color(0.40, 0.60, 1.00, 1.0),  # BOOL   – blue
-	2: Color(0.40, 0.90, 0.40, 1.0),  # INT    – green
+	2: Color(0.25, 0.82, 0.88, 1.0),  # INT    – cyan
 	3: Color(1.00, 0.70, 0.20, 1.0),  # FLOAT  – orange
-	4: Color(1.00, 0.40, 0.40, 1.0),  # STRING – red
+	4: Color(0.95, 0.45, 0.78, 1.0),  # STRING – pink
 	5: Color(0.90, 0.60, 0.90, 1.0),  # ANY    – purple
 }
 
